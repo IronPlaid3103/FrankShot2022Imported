@@ -11,16 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.HopperBack;
-import frc.robot.commands.HopperGo;
-import frc.robot.commands.HopperStop;
-import frc.robot.commands.RobotDrive;
-import frc.robot.subsystems.Drive_Train;
-import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.util.Limelight;
 
 /**
@@ -36,21 +28,20 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final ADIS16470_IMU _gyro = new ADIS16470_IMU();
-  private final Drive_Train _drive_Train = new Drive_Train();
-  private final Joystick m_driver = new Joystick(0);
-  private final Joystick m_operator = new Joystick(1); 
-  private final Intake m_intake = new Intake();
-  private final Hopper m_hopper = new Hopper();
-  private final Shooter m_shooter = new Shooter();
-  private final Limelight m_limelight = new Limelight();
+  private final Drive_Train _drive_Train = new Drive_Train(_gyro);
+  private final Joystick _driver = new Joystick(0);
+  private final Hopper _hopper = new Hopper();
+  private final Intake _intake = new Intake();
+  private final Limelight _limelight = new Limelight();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    _drive_Train.setDefaultCommand(new RobotDrive(_drive_Train, m_driver));
-    //m_intake.setDefaultCommand(new IntakeStop(m_intake)); 
-    m_hopper.setDefaultCommand(new HopperStop(m_hopper));
+
+    _drive_Train.setDefaultCommand(new RobotDrive(_drive_Train, _driver));
+    _intake.setDefaultCommand(new IntakeStop(_intake)); 
+    _hopper.setDefaultCommand(new HopperStop(_hopper));
   }
 
   /**
@@ -61,22 +52,29 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //OPERATOR
-    // new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(m_intake)); 
-    // new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(m_intake)); 
+    // // new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(m_intake)); 
+    // // new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(m_intake)); 
 
-    new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperGo(m_hopper));
-    new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(m_hopper));
+    // new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperGo(m_hopper));
+    // new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(m_hopper));
 
    
-    new JoystickButton(m_operator, Constants.JoystickConstants.LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> m_limelight.toggleBypass()));
+    // new JoystickButton(m_operator, Constants.JoystickConstants.LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> m_limelight.toggleBypass()));
 
     //DRIVER
+    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_LEFT).whenPressed(new InstantCommand(() -> _gyro.reset()));
 
-    // new JoystickButton(m_driver, Constants.JoystickConstants.A).whileHeld(new ShooterGo(m_shooter, m_hopper, COLOR.Green)); 
-    // new JoystickButton(m_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterGo(m_shooter, m_hopper, COLOR.Yellow));
-    // new JoystickButton(m_driver, Constants.JoystickConstants.X).whileHeld(new ShooterGo(m_shooter, m_hopper, COLOR.Blue));
-    // new JoystickButton(m_driver, Constants.JoystickConstants.B).whileHeld(new ShooterGo(m_shooter, m_hopper, COLOR.Red));
+    //the buttons below are generally for testing purposes only
+    new JoystickButton(_driver, Constants.JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(_intake)); 
+    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(_intake)); 
 
+    new JoystickButton(_driver, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperIdle(_hopper));
+    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(_hopper));
+
+    // new JoystickButton(m_driver, Constants.JoystickConstants.A).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Green)); 
+    // new JoystickButton(m_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Yellow));
+    // new JoystickButton(m_driver, Constants.JoystickConstants.X).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Blue));
+    // new JoystickButton(m_driver, Constants.JoystickConstants.B).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Red));
   }
 
   /**

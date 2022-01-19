@@ -9,12 +9,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drive_Train extends SubsystemBase {
   /** Creates a new Drive_Train. */
-  public Drive_Train() {
+  public Drive_Train(ADIS16470_IMU gyro) {
+
+    _gyro = gyro;
+    _gyro.setYawAxis(IMUAxis.kY);
+    _gyro.reset();
+
     fLMotor.restoreFactoryDefaults();
     fRMotor.restoreFactoryDefaults();
     bRMotor.restoreFactoryDefaults();
@@ -40,7 +46,7 @@ public class Drive_Train extends SubsystemBase {
     double xSpeed = applyDeadband(driveControl.getRawAxis(0));
     double zRotation = applyDeadband(driveControl.getRawAxis(4));
 
-    _drive.driveCartesian(-ySpeed, xSpeed, zRotation);
+    _drive.driveCartesian(-ySpeed, xSpeed, zRotation, _gyro.getAngle());
   }
 
   private double applyDeadband(double value) {
