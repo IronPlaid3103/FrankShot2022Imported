@@ -8,12 +8,16 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.ShooterV2.COLOR;
 import frc.robot.util.Limelight;
+import frc.robot.util.TrajectoryCache;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,6 +37,9 @@ public class RobotContainer {
   private final Hopper _hopper = new Hopper();
   private final Intake _intake = new Intake();
   private final Limelight _limelight = new Limelight();
+  private final ShooterV2 _shooter = new ShooterV2();
+
+  private SendableChooser<String> m_ChallengeChooser = new SendableChooser<String>(); 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -42,6 +49,43 @@ public class RobotContainer {
     _drive_Train.setDefaultCommand(new RobotDrive(_drive_Train, _driver));
     _intake.setDefaultCommand(new IntakeStop(_intake)); 
     _hopper.setDefaultCommand(new HopperStop(_hopper));
+
+    loadChallengeChooser();
+  }
+
+  private void loadChallengeChooser() {
+    TrajectoryCache.clear();
+    m_ChallengeChooser = new SendableChooser<>();
+    m_ChallengeChooser.addOption("Galactic Search", "Galactic Search");
+
+    cacheTrajectory("AutoNav - Barrel Racing", "Paths/output/AutoNav--Barrel_Racing.wpilib.json");
+    m_ChallengeChooser.addOption("AutoNav - Bounce", "AutoNav - Bounce");
+    cacheTrajectory("AutoNav - Slalom", "Paths/output/AutoNav--Slalom.wpilib.json");
+
+    cacheTrajectory("GS A Blue", "Paths/output/GS_A--Blue.wpilib.json");
+    cacheTrajectory("GS A Red", "Paths/output/GS_A--Red.wpilib.json");
+    cacheTrajectory("GS B Blue", "Paths/output/GS_B--Blue.wpilib.json");
+    cacheTrajectory("GS B Red", "Paths/output/GS_B--Red.wpilib.json");
+
+    cacheTrajectory("AutoNav--Bounce0", "Paths/output/AutoNav--Bounce0.wpilib.json");
+    cacheTrajectory("AutoNav--Bounce1", "Paths/output/AutoNav--Bounce1.wpilib.json");
+    cacheTrajectory("AutoNav--Bounce2", "Paths/output/AutoNav--Bounce2.wpilib.json");
+    cacheTrajectory("AutoNav--Bounce3", "Paths/output/AutoNav--Bounce3.wpilib.json");
+
+    cacheTrajectory("Test-Straight", "Paths/output/test-straight.wpilib.json");
+    cacheTrajectory("Test-Turn", "Paths/output/test-turn.wpilib.json");
+    cacheTrajectory("Test-Turn2", "Paths/output/test-turn2.wpilib.json");
+    cacheTrajectory("Test-Curve", "Paths/output/test-curve.wpilib.json");
+    cacheTrajectory("Test-StraightReverse", "Paths/output/test-straightreverse.wpilib.json");
+    
+    m_ChallengeChooser.addOption("Test-Group", "Test-Group");
+
+    SmartDashboard.putData("Challenge Chooser", m_ChallengeChooser);
+  }
+
+  private void cacheTrajectory(String key, String trajectoryJson) {
+    m_ChallengeChooser.addOption(key, key);
+    TrajectoryCache.add(key, trajectoryJson);
   }
 
   /**
@@ -71,10 +115,10 @@ public class RobotContainer {
     new JoystickButton(_driver, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperIdle(_hopper));
     new JoystickButton(_driver, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(_hopper));
 
-    // new JoystickButton(m_driver, Constants.JoystickConstants.A).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Green)); 
-    // new JoystickButton(m_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Yellow));
-    // new JoystickButton(m_driver, Constants.JoystickConstants.X).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Blue));
-    // new JoystickButton(m_driver, Constants.JoystickConstants.B).whileHeld(new ShooterV2Go(m_shooter, m_hopper, COLOR.Red));
+    new JoystickButton(_driver, Constants.JoystickConstants.A).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Green)); 
+    new JoystickButton(_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Yellow));
+    new JoystickButton(_driver, Constants.JoystickConstants.X).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Blue));
+    new JoystickButton(_driver, Constants.JoystickConstants.B).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Red));
   }
 
   /**
