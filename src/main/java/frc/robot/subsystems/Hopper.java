@@ -15,7 +15,6 @@ import frc.robot.util.Settings;
 
 public class Hopper extends SubsystemBase {
   private final CANSparkMax _hopperMotor = new CANSparkMax(HopperConstants.hopperMotor, MotorType.kBrushed);
-  // private final WPI_TalonSRX _hopperMotor = new WPI_TalonSRX(HopperConstants.hopperMotor);
   private final CANSparkMax _hopperFeederMotor = new CANSparkMax(HopperConstants.hopperFeederMotor, MotorType.kBrushless);
   private double _hopperPower = Constants.HopperConstants.defaultPower;
   private double _hopperFeederPower = Constants.HopperConstants.defaultFeederPower;
@@ -33,17 +32,17 @@ public class Hopper extends SubsystemBase {
 
   public void idle() {
     _hopperMotor.set(_hopperPower);
-    _hopperFeederMotor.set(_hopperFeederIdle);
+    _hopperFeederMotor.set(-_hopperFeederIdle);
   }
 
   public void hopperGo() {
     _hopperMotor.set(_hopperPower);
-    _hopperFeederMotor.set(_hopperFeederPower);
+    _hopperFeederMotor.set(-_hopperFeederPower);
   }
 
   public void hopperBack() {
     _hopperMotor.set(-_hopperPower);
-    _hopperFeederMotor.set(-_hopperFeederIdle);
+    _hopperFeederMotor.set(_hopperFeederIdle);
   }
 
   public void setPower(double power){
