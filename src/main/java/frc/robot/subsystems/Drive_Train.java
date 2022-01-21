@@ -4,8 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,43 +23,18 @@ import frc.robot.Constants.JoystickConstants;
 
 public class Drive_Train extends SubsystemBase {
   /** Creates a new Drive_Train. */
-  public Drive_Train(ADIS16470_IMU gyro) {
 
-    _gyro = gyro;
-    _gyro.setYawAxis(IMUAxis.kY);
-    _gyro.reset();
+  private CANSparkMax _fLMotor = new CANSparkMax(DrivetrainConstants.frontLeftMotor, MotorType.kBrushless);
+  private CANSparkMax _fRMotor = new CANSparkMax(DrivetrainConstants.frontRightMotor, MotorType.kBrushless);
+  private CANSparkMax _bLMotor = new CANSparkMax(DrivetrainConstants.rearLeftMotor, MotorType.kBrushless);
+  private CANSparkMax _bRMotor = new CANSparkMax(DrivetrainConstants.rearRightMotor, MotorType.kBrushless); 
 
-    fLMotor.restoreFactoryDefaults();
-    fRMotor.restoreFactoryDefaults();
-    bRMotor.restoreFactoryDefaults();
-    bLMotor.restoreFactoryDefaults();
-
-    fRMotor.setInverted(true);
-    fLMotor.setInverted(false);
-    bRMotor.setInverted(true);
-    bLMotor.setInverted(false);
-  }
-
-  public void enableOpenLoopRampRate(boolean enable) {
-    double rampRate = (enable ? DrivetrainConstants.rampRate : 0.0);
-
-    fLMotor.setOpenLoopRampRate(rampRate);
-    fRMotor.setOpenLoopRampRate(rampRate);
-    bLMotor.setOpenLoopRampRate(rampRate);
-    bRMotor.setOpenLoopRampRate(rampRate);
-  }
-
-  private CANSparkMax fLMotor = new CANSparkMax(DrivetrainConstants.frontLeftMotor, MotorType.kBrushless);
-  private CANSparkMax fRMotor = new CANSparkMax(DrivetrainConstants.frontRightMotor, MotorType.kBrushless);
-  private CANSparkMax bLMotor = new CANSparkMax(DrivetrainConstants.rearLeftMotor, MotorType.kBrushless);
-  private CANSparkMax bRMotor = new CANSparkMax(DrivetrainConstants.rearRightMotor, MotorType.kBrushless); 
-
-  private final MecanumDrive _drive = new MecanumDrive(fLMotor, bLMotor, fRMotor, bRMotor);
+  private final MecanumDrive _drive = new MecanumDrive(_fLMotor, _bLMotor, _fRMotor, _bRMotor);
 
   private ADIS16470_IMU _gyro;
   
-  private CANEncoder m_left_follower;
-  private CANEncoder m_right_follower;
+  private RelativeEncoder m_left_follower;
+  private RelativeEncoder m_right_follower;
 
   private DifferentialDriveOdometry m_odometry;
 
@@ -79,6 +54,33 @@ public class Drive_Train extends SubsystemBase {
   private double _driveRightkP = Constants.DrivetrainConstants.driveRightkP;
   private double _nerf = 1.0;
 
+  public Drive_Train(ADIS16470_IMU gyro) {
+
+    _gyro = gyro;
+    _gyro.setYawAxis(IMUAxis.kY);
+    _gyro.reset();
+
+    _fLMotor.restoreFactoryDefaults();
+    _fRMotor.restoreFactoryDefaults();
+    _bRMotor.restoreFactoryDefaults();
+    _bLMotor.restoreFactoryDefaults();
+
+    _fRMotor.setInverted(true);
+    _fLMotor.setInverted(false);
+    _bRMotor.setInverted(true);
+    _bLMotor.setInverted(false);
+
+    enableOpenLoopRampRate(true);
+  }
+
+  public void enableOpenLoopRampRate(boolean enable) {
+    double rampRate = (enable ? DrivetrainConstants.rampRate : 0.0);
+
+    _fLMotor.setOpenLoopRampRate(rampRate);
+    _fRMotor.setOpenLoopRampRate(rampRate);
+    _bLMotor.setOpenLoopRampRate(rampRate);
+    _bRMotor.setOpenLoopRampRate(rampRate);
+  }
 
   public void teleopDrive(Joystick driveControl){
     double ySpeed = applyDeadband(driveControl.getRawAxis(JoystickConstants.LEFT_STICK_Y));
@@ -118,10 +120,10 @@ public class Drive_Train extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    fLMotor.setVoltage(leftVolts);
-    fRMotor.setVoltage(-rightVolts);
-    bRMotor.setVoltage(-rightVolts);
-    bLMotor.setVoltage(leftVolts);
+    _fLMotor.setVoltage(leftVolts);
+    _fRMotor.setVoltage(-rightVolts);
+    _bRMotor.setVoltage(-rightVolts);
+    _bLMotor.setVoltage(leftVolts);
   }
 
   public void setkP(double kP){
