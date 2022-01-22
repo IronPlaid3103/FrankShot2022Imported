@@ -125,7 +125,7 @@ public class Drive_Train extends SubsystemBase {
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(m_left_follower.getVelocity() / 60, -m_right_follower.getVelocity() / 60);
+    return new DifferentialDriveWheelSpeeds(m_left_follower.getVelocity() / 60, m_right_follower.getVelocity() / 60);
   }
 
   public void resetOdometry(Pose2d pose) {
@@ -233,7 +233,7 @@ public class Drive_Train extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_pose = m_odometry.update(_gyro.getRotation2d(), m_left_follower.getPosition(), -m_right_follower.getPosition());
+    m_pose = m_odometry.update(_gyro.getRotation2d(), m_left_follower.getPosition(), m_right_follower.getPosition());
     
     setkP(Settings.getLiveDouble("Limelight", "kP", Constants.LimelightConstants.kP));
     setkI(Settings.getLiveDouble("Limelight", "kI", Constants.LimelightConstants.kI));
