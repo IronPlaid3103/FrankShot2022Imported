@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drive_Train;
 import frc.robot.subsystems.Intake;
@@ -15,7 +15,7 @@ import frc.robot.util.LIDARLiteV3;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GalacticSearch extends SequentialCommandGroup {
   /** Creates a new GalacticSearch. */
-  public GalacticSearch(Drive_Train drivetrain, Intake intake, ADIS16470_IMU gyro, LIDARLiteV3 lidar) {
+  public GalacticSearch(Drive_Train drivetrain, Intake intake, AHRS gyro, LIDARLiteV3 lidar) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(

@@ -8,7 +8,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,6 +27,7 @@ import frc.robot.util.Limelight;
 import frc.robot.util.Settings;
 import frc.robot.util.TrajectoryCache;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -35,7 +37,7 @@ import frc.robot.util.TrajectoryCache;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private final ADIS16470_IMU _gyro = new ADIS16470_IMU();
+  private final AHRS _gyro = new AHRS(SPI.Port.kMXP);
   private final Drive_Train _drive_Train = new Drive_Train(_gyro);
   private final Joystick _driver = new Joystick(0);
   private final Hopper _hopper = new Hopper();

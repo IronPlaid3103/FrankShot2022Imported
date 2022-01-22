@@ -8,18 +8,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive_Train;
 import frc.robot.util.LIDARLiteV3;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutonDriveRight extends CommandBase {
   private final Drive_Train _drivetrain;
   private Timer _timer = new Timer();
-  private ADIS16470_IMU _gyro;
+  private AHRS _gyro;
   private LIDARLiteV3 _lidar;
 
   /** Creates a new DriveRight. */
-  public AutonDriveRight(Drive_Train drivetrain, ADIS16470_IMU gyro, LIDARLiteV3 lidar) {
+  public AutonDriveRight(Drive_Train drivetrain, AHRS gyro, LIDARLiteV3 lidar) {
     _drivetrain = drivetrain;
     _gyro = gyro;
     _lidar = lidar;

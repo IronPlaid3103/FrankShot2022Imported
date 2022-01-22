@@ -12,14 +12,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.JoystickConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive_Train extends SubsystemBase {
   /** Creates a new Drive_Train. */
@@ -31,7 +31,7 @@ public class Drive_Train extends SubsystemBase {
 
   private final MecanumDrive _drive = new MecanumDrive(_fLMotor, _bLMotor, _fRMotor, _bRMotor);
 
-  private ADIS16470_IMU _gyro;
+  private AHRS _gyro;
   
   private RelativeEncoder m_left_follower;
   private RelativeEncoder m_right_follower;
@@ -54,10 +54,10 @@ public class Drive_Train extends SubsystemBase {
   private double _driveRightkP = Constants.DrivetrainConstants.driveRightkP;
   private double _nerf = 1.0;
 
-  public Drive_Train(ADIS16470_IMU gyro) {
+  public Drive_Train(AHRS gyro) {
 
     _gyro = gyro;
-    _gyro.setYawAxis(IMUAxis.kY);
+    // _gyro.setYawAxis(IMUAxis.kY);
     _gyro.reset();
 
     _fLMotor.restoreFactoryDefaults();
@@ -88,13 +88,15 @@ public class Drive_Train extends SubsystemBase {
     double zRotation = applyDeadband(driveControl.getRawAxis(JoystickConstants.RIGHT_STICK_X));
 
     _drive.driveCartesian(-ySpeed, xSpeed, zRotation, _gyro.getAngle());
+
+    SmartDashboard.putNumber("Gyro.Angle", _gyro.getAngle());
   }
 
   private double applyDeadband(double value) {
-    if(Math.abs(value) < .1)
+    if(Math.abs(value) < DrivetrainConstants.deadband)
       return 0.0;
     else
-      return (value - Math.copySign(.1, value)) / (1 - .1);
+      return (value - Math.copySign(.1, value)) / (1 - DrivetrainConstants.deadband);
   }
 
   public void drive(double ySpeed, double xSpeed, double zRotation) {
