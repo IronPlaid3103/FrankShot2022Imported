@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.JoystickConstants;
+import frc.robot.util.Settings;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive_Train extends SubsystemBase {
@@ -71,6 +72,17 @@ public class Drive_Train extends SubsystemBase {
     _bLMotor.setInverted(false);
 
     enableOpenLoopRampRate(true);
+
+    m_left_follower = _fLMotor.getEncoder();
+    m_right_follower = _fRMotor.getEncoder();
+
+    m_left_follower.setPositionConversionFactor(DrivetrainConstants.kDistancePerWheelRevolutionMeters / DrivetrainConstants.kGearReduction);
+    m_right_follower.setPositionConversionFactor(DrivetrainConstants.kDistancePerWheelRevolutionMeters / DrivetrainConstants.kGearReduction);
+
+    encoderReset();
+    
+    m_odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+
   }
 
   public void enableOpenLoopRampRate(boolean enable) {
@@ -118,7 +130,7 @@ public class Drive_Train extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     encoderReset();
-    m_odometry.resetPosition(pose, Rotation2d.fromDegrees(_gyro.getAngle()));
+    m_odometry.resetPosition(pose, _gyro.getRotation2d());
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
@@ -221,5 +233,14 @@ public class Drive_Train extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    m_pose = m_odometry.update(_gyro.getRotation2d(), m_left_follower.getPosition(), -m_right_follower.getPosition());
+    
+    setkP(Settings.getLiveDouble("Limelight", "kP", Constants.LimelightConstants.kP));
+    setkI(Settings.getLiveDouble("Limelight", "kI", Constants.LimelightConstants.kI));
+    setkD(Settings.getLiveDouble("Limelight", "kD", Constants.LimelightConstants.kD));
+    
+    setksVolts(Settings.getLiveDouble("DriveTrain", "ksVolts", Constants.DrivetrainConstants.ksVolts));
+    setkvVoltSecondsPerMeter(Settings.getLiveDouble("DriveTrain", "kvVoltSecondsPerMeter", Constants.DrivetrainConstants.kvVoltSecondsPerMeter));
+    setkaVoltSecondsSquaredPerMeter(Settings.getLiveDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
   }
 }
