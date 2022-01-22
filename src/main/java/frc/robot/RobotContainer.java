@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,11 +16,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ShooterV2.COLOR;
+import frc.robot.util.LIDARLiteV3;
 import frc.robot.util.Limelight;
+import frc.robot.util.Settings;
 import frc.robot.util.TrajectoryCache;
 
 /**
@@ -27,9 +34,6 @@ import frc.robot.util.TrajectoryCache;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   private final ADIS16470_IMU _gyro = new ADIS16470_IMU();
   private final Drive_Train _drive_Train = new Drive_Train(_gyro);
@@ -38,6 +42,7 @@ public class RobotContainer {
   private final Intake _intake = new Intake();
   private final Limelight _limelight = new Limelight();
   private final ShooterV2 _shooter = new ShooterV2();
+  private final LIDARLiteV3 _lidar = new LIDARLiteV3(0,0);
 
   private SendableChooser<String> m_ChallengeChooser = new SendableChooser<String>(); 
 
@@ -45,10 +50,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    loadSettings();
 
     _drive_Train.setDefaultCommand(new RobotDrive(_drive_Train, _driver));
-    _intake.setDefaultCommand(new IntakeStop(_intake)); 
-    _hopper.setDefaultCommand(new HopperStop(_hopper));
 
     loadChallengeChooser();
   }
@@ -127,7 +131,71 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    
+    String challenge = m_ChallengeChooser.getSelected(); 
+
+    Trajectory trajectory;
+    if (challenge == "Galactic Search") {
+      return new GalacticSearch(_drive_Train, _intake, _gyro, _lidar);
+    } else if (challenge == "AutoNav - Bounce") {
+      return new BounceSequence(_drive_Train);
+    } else {
+      trajectory = TrajectoryCache.get(challenge);
+    }
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        _drive_Train::getPose,
+        new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(Constants.DrivetrainConstants.ksVolts,
+          Constants.DrivetrainConstants.kvVoltSecondsPerMeter,
+          Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter),
+        Constants.DrivetrainConstants.kDriveKinematics,
+        _drive_Train::getWheelSpeeds,
+        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
+        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
+        _drive_Train::tankDriveVolts,
+        _drive_Train);
+     // Reset odometry to the starting pose of the trajectory.
+     _drive_Train.resetOdometry(trajectory.getInitialPose());
+
+     // Run path following command, then stop at the end.
+     return ramseteCommand.andThen(() -> _drive_Train.tankDriveVolts(0, 0));
+  }
+
+  public void loadSettings(){
+    _intake.setPower(Settings.loadDouble("Intake", "Power", Constants.IntakeConstants.defaultPower));
+    _hopper.setPower(Settings.loadDouble("Hopper", "Power", Constants.HopperConstants.defaultPower));
+    _hopper.setFeederPower(Settings.getLiveDouble("Hopper", "FeederPower", Constants.HopperConstants.hopperFeederPower));
+    _shooter.setkP(Settings.loadDouble("Shooter", "kF", Constants.ShooterConstants.defaultkF));
+    _shooter.setkF(Settings.loadDouble("Shooter", "kP", Constants.ShooterConstants.defaultkP));
+    _shooter.setRedVelocity(Settings.loadDouble("Shooter", "RedVelocity", Constants.ShooterConstants.redVelocity));
+    _shooter.setBlueVelocity(Settings.loadDouble("Shooter", "BlueVelocity", Constants.ShooterConstants.blueVelocity));
+    _shooter.setYellowVelocity(Settings.loadDouble("Shooter", "YellowVelocity", Constants.ShooterConstants.yellowVelocity));
+    _shooter.setGreenVelocity(Settings.loadDouble("Shooter", "GreenVelocity", Constants.ShooterConstants.greenVelocity));
+    _drive_Train.setkP(Settings.loadDouble("Limelight", "kP", Constants.LimelightConstants.kP));
+    _drive_Train.setkI(Settings.loadDouble("Limelight", "kI", Constants.LimelightConstants.kI));
+    _drive_Train.setkD(Settings.loadDouble("Limelight", "kD", Constants.LimelightConstants.kD));
+    _drive_Train.setksVolts(Settings.loadDouble("DriveTrain", "ksVolts", Constants.DrivetrainConstants.ksVolts));
+    _drive_Train.setkvVoltSecondsPerMeter(Settings.loadDouble("DriveTrain", "kvVoltSecondsPerMeter", Constants.DrivetrainConstants.kvVoltSecondsPerMeter));
+    _drive_Train.setkaVoltSecondsSquaredPerMeter(Settings.loadDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
+  }
+
+  public void saveSettings(){
+    Settings.saveDouble("Intake", "Power", _intake.getPower());
+    Settings.saveDouble("Hopper", "Power", _hopper.getPower());
+    Settings.saveDouble("Hopper", "FeederPower", _hopper.getFeederPower());
+    Settings.saveDouble("Shooter", "kF", _shooter.getkF());
+    Settings.saveDouble("Shooter", "kP", _shooter.getkP());
+    Settings.saveDouble("Shooter", "RedVelocity", _shooter.getRedVelocity());
+    Settings.saveDouble("Shooter", "BlueVelocity", _shooter.getBlueVelocity());
+    Settings.saveDouble("Shooter", "YellowVelocity", _shooter.getYellowVelocity());
+    Settings.saveDouble("Shooter", "GreenVelocity", _shooter.getGreenVelocity());
+    Settings.saveDouble("Limelight", "kP", _drive_Train.getkP());
+    Settings.saveDouble("Limelight", "kI", _drive_Train.getkI());
+    Settings.saveDouble("Limelight", "kD", _drive_Train.getkD());
+    Settings.saveDouble("DriveTrain", "ksVolts", _drive_Train.getksVolts());
+    Settings.saveDouble("DriveTrain", "kvVoltsSecondsPerMeter", _drive_Train.getkvVoltSecondsPerMeter());
+    Settings.saveDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", _drive_Train.getkaVoltSecondsSquaredPerMeter());
   }
 }

@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * the appropriate final values.
  */
 public class Settings {
-    private static Preferences _preferences = Preferences.getInstance();
 
   /**
    * Loads a boolean from the Preferences table (stored on the roboRIO and loaded as part of the Network Tables) and display it on the SmartDashboard for live edits
@@ -22,7 +21,7 @@ public class Settings {
    *     associated with the key
    */
     public static boolean loadBoolean(String subsystem, String attribute, boolean defaultValue) {
-        boolean value = _preferences.getBoolean(subsystem + "." + attribute, defaultValue);
+        boolean value = Preferences.getBoolean(subsystem + "." + attribute, defaultValue);
         SmartDashboard.putBoolean(subsystem + "." + attribute, value);
         return value;
     }
@@ -35,7 +34,7 @@ public class Settings {
    * @param value the value to be saved
    */
     public static void saveBoolean(String subsystem, String attribute, boolean value) {
-        _preferences.putBoolean(subsystem + "." + attribute, value);
+        Preferences.setBoolean(subsystem + "." + attribute, value);
     }
 
   /**
@@ -61,7 +60,7 @@ public class Settings {
    *     associated with the key
    */
     public static double loadDouble(String subsystem, String attribute, double defaultValue) {
-        double value = _preferences.getDouble(subsystem + "." + attribute, defaultValue);
+        double value = Preferences.getDouble(subsystem + "." + attribute, defaultValue);
         SmartDashboard.putNumber(subsystem + "." + attribute, value);
         return value;
     }
@@ -74,7 +73,7 @@ public class Settings {
    * @param value the value to be saved
    */
     public static void saveDouble(String subsystem, String attribute, double value) {
-        _preferences.putDouble(subsystem + "." + attribute, value);
+        Preferences.setDouble(subsystem + "." + attribute, value);
     }
 
   /**
@@ -100,7 +99,7 @@ public class Settings {
    *     associated with the key
    */
     public static String loadString(String subsystem, String attribute, String defaultValue) {
-        String value = _preferences.getString(subsystem + "." + attribute, defaultValue);
+        String value = Preferences.getString(subsystem + "." + attribute, defaultValue);
         SmartDashboard.putString(subsystem + "." + attribute, value);
         return value;
     }
@@ -113,7 +112,7 @@ public class Settings {
    * @param value the value to be saved
    */
     public static void saveString(String subsystem, String attribute, String value) {
-        _preferences.putString(subsystem + "." + attribute, value);
+        Preferences.setString(subsystem + "." + attribute, value);
     }
 
   /**

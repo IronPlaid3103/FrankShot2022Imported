@@ -8,12 +8,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.util.Settings;
 
 public class Hopper extends SubsystemBase {
+  
   private final CANSparkMax _hopperMotor = new CANSparkMax(HopperConstants.hopperMotor, MotorType.kBrushed);
   private final CANSparkMax _hopperFeederMotor = new CANSparkMax(HopperConstants.hopperFeederMotor, MotorType.kBrushless);
   private double _hopperPower = Constants.HopperConstants.defaultPower;
@@ -22,6 +24,7 @@ public class Hopper extends SubsystemBase {
 
   /** Creates a new Hopper. */
   public Hopper() {
+    setDefaultCommand(new RunCommand(this::stop, this));
     _hopperFeederMotor.setInverted(true);
   }
 

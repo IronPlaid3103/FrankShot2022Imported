@@ -24,6 +24,9 @@ public class ShooterV2 extends SubsystemBase {
   private double _targetRPM;
 
   double _targetVelocity_UnitsPer100ms;
+
+  private double _kF = ShooterConstants.defaultkF;
+  private double _kP = ShooterConstants.defaultkP;
   
   /** Creates a new ShooterSimple. */
   public ShooterV2() {
@@ -90,6 +93,14 @@ public class ShooterV2 extends SubsystemBase {
     }
   }
 
+  public double getkF() {
+    return _kF;
+  }
+
+  public double getkP() {
+    return _kP;
+  }
+
   public void shoot(double targetVelocity) {
     /**
      * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
@@ -153,6 +164,16 @@ public class ShooterV2 extends SubsystemBase {
 
   public double getGreenVelocity(){
     return ShooterConstants.greenVelocity;
+  }
+
+  public void setkF(double kF) {
+    _kF = kF;
+    _shooterMotor1.config_kF(0, _kF);
+  }
+
+  public void setkP(double kP) {
+    _kP = kP;
+    _shooterMotor1.config_kP(0, _kP);
   }
 
   @Override

@@ -87,10 +87,11 @@ public final class Constants {
 
     public static final class HopperConstants {
         public static final int hopperMotor = 6;
-        public static final double defaultPower = 0.5;
+        public static final double defaultPower = 0.4;
         public static final int hopperFeederMotor = 9;
         public static final double defaultFeederIdle = -0.02;
         public static final double defaultFeederPower = -0.25;
+        public static final double hopperFeederPower = 0.5;
     }
 
     public static final class ShooterConstants {
