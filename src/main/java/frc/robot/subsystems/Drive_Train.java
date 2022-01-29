@@ -81,7 +81,7 @@ public class Drive_Train extends SubsystemBase {
 
     encoderReset();
     
-    m_odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+    m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-_gyro.getAngle()), new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
 
   }
 
@@ -233,8 +233,8 @@ public class Drive_Train extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_pose = m_odometry.update(_gyro.getRotation2d(), m_left_follower.getPosition(), m_right_follower.getPosition());
-    
+    m_pose = m_odometry.update(Rotation2d.fromDegrees(-_gyro.getAngle()), m_left_follower.getPosition(), m_right_follower.getPosition());
+
     setkP(Settings.getLiveDouble("Limelight", "kP", Constants.LimelightConstants.kP));
     setkI(Settings.getLiveDouble("Limelight", "kI", Constants.LimelightConstants.kI));
     setkD(Settings.getLiveDouble("Limelight", "kD", Constants.LimelightConstants.kD));
