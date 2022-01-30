@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.util.Settings;
 
@@ -18,9 +17,9 @@ public class Hopper extends SubsystemBase {
   
   private final CANSparkMax _hopperMotor = new CANSparkMax(HopperConstants.hopperMotor, MotorType.kBrushed);
   private final CANSparkMax _hopperFeederMotor = new CANSparkMax(HopperConstants.hopperFeederMotor, MotorType.kBrushless);
-  private double _hopperPower = Constants.HopperConstants.defaultPower;
-  private double _hopperFeederPower = Constants.HopperConstants.defaultFeederPower;
-  private double _hopperFeederIdle = Constants.HopperConstants.defaultFeederIdle;  
+  private double _hopperPower = HopperConstants.defaultPower;
+  private double _hopperFeederPower = HopperConstants.defaultFeederPower;
+  private double _hopperFeederIdle = HopperConstants.defaultFeederIdle;  
 
   /** Creates a new Hopper. */
   public Hopper() {
@@ -74,9 +73,9 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    _hopperPower = Settings.getLiveDouble("Hopper", "Power", Constants.HopperConstants.defaultPower);
-    _hopperFeederPower = Settings.getLiveDouble("Hopper", "FeederPower", Constants.HopperConstants.defaultFeederPower);
-    _hopperFeederIdle = Settings.getLiveDouble("Hopper", "FeederIdle", Constants.HopperConstants.defaultFeederIdle);
+    _hopperPower = Settings.getLiveDouble("Hopper", "Power", HopperConstants.defaultPower);
+    _hopperFeederPower = Settings.getLiveDouble("Hopper", "FeederPower", HopperConstants.defaultFeederPower);
+    _hopperFeederIdle = Settings.getLiveDouble("Hopper", "FeederIdle", HopperConstants.defaultFeederIdle);
 
     double amps = _hopperMotor.getOutputCurrent();
     SmartDashboard.putNumber("Hopper.Amps", amps);

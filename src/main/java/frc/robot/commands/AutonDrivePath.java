@@ -8,27 +8,24 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drive_Train;
-import frc.robot.subsystems.Intake;
 import frc.robot.util.TrajectoryCache;
 
-public class GalacticSearchRamsete extends CommandBase {
+public class AutonDrivePath extends CommandBase {
   private Drive_Train _drivetrain;
-  private Intake _intake;
   private RamseteCommand _ramsete;
+  private String _path;
 
-  /** Creates a new GalacticSearchRamsete. */
-  public GalacticSearchRamsete(Drive_Train drivetrain, Intake intake) {
+  public AutonDrivePath(Drive_Train drivetrain, String path) {
     // Use addRequirements() here to declare subsystem dependencies.
     _drivetrain = drivetrain;
-    _intake = intake;
-    addRequirements(_drivetrain, _intake);
+    _path = path;
+
+    addRequirements(_drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -46,24 +43,12 @@ public class GalacticSearchRamsete extends CommandBase {
       return;
     }
 
-    _intake.intakeIn();
     _ramsete.execute();
   }
 
   private RamseteCommand createRamseteCommand() {
-    NetworkTableEntry entry = NetworkTableInstance.getDefault().getTable("Frank").getEntry("GalacticSearchPath");
-    String path = entry.getString("");
 
-    Trajectory trajectory = null;
-    if (path.equals("ARed")) {
-      trajectory = TrajectoryCache.get("GS A Red");
-    } else if (path.equals("ABlue")) {
-      trajectory = TrajectoryCache.get("GS A Blue");
-    } else if (path.equals("BRed")) {
-      trajectory = TrajectoryCache.get("GS B Red");
-    } else if (path.equals("BBlue")) {
-      trajectory = TrajectoryCache.get("GS B Blue");
-    }
+    Trajectory trajectory = TrajectoryCache.get(_path);
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
@@ -85,7 +70,6 @@ public class GalacticSearchRamsete extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    _intake.stop();
     _ramsete.end(interrupted);
   }
 
