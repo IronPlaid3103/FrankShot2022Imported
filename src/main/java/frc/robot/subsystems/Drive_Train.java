@@ -81,7 +81,7 @@ public class Drive_Train extends SubsystemBase {
 
     encoderReset();
     
-    m_odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+    m_odometry = new DifferentialDriveOdometry(_gyro.getRotation2d(), new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
 
   }
 
@@ -135,8 +135,8 @@ public class Drive_Train extends SubsystemBase {
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     _fLMotor.setVoltage(leftVolts);
-    _fRMotor.setVoltage(-rightVolts);
-    _bRMotor.setVoltage(-rightVolts);
+    _fRMotor.setVoltage(rightVolts);
+    _bRMotor.setVoltage(rightVolts);
     _bLMotor.setVoltage(leftVolts);
   }
 
