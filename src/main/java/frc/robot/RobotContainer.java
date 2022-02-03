@@ -124,7 +124,8 @@ public class RobotContainer {
     new JoystickButton(_driver, Constants.JoystickConstants.A).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Green)); 
     new JoystickButton(_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Yellow));
     new JoystickButton(_driver, Constants.JoystickConstants.X).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Blue));
-    new JoystickButton(_driver, Constants.JoystickConstants.B).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Red));
+    //new JoystickButton(_driver, Constants.JoystickConstants.B).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Red));
+    new JoystickButton(_driver, Constants.JoystickConstants.B).whenReleased(new AutonIntake(_intake, _drive_Train, "Test-Curve"));
   }
 
   /**
