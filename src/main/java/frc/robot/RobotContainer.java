@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.ShooterV2.COLOR;
@@ -102,24 +103,24 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     //OPERATOR
-    // // new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(m_intake)); 
-    // // new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(m_intake)); 
+    // // new JoystickButton(m_operator, JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(m_intake)); 
+    // // new JoystickButton(m_operator, JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(m_intake)); 
 
-    // new JoystickButton(m_operator, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperGo(m_hopper));
-    // new JoystickButton(m_operator, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(m_hopper));
+    // new JoystickButton(m_operator, JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperGo(m_hopper));
+    // new JoystickButton(m_operator, JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(m_hopper));
 
    
-    // new JoystickButton(m_operator, Constants.JoystickConstants.LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> m_limelight.toggleBypass()));
+    // new JoystickButton(m_operator, JoystickConstants.LEFT_STICK_BUTTON).whenPressed(new InstantCommand(() -> m_limelight.toggleBypass()));
 
     //DRIVER
-    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_LEFT).whenPressed(new InstantCommand(() -> _gyro.reset()));
+    new JoystickButton(_driver, JoystickConstants.LOGO_LEFT).whenPressed(new InstantCommand(() -> _gyro.reset()));
 
     //the buttons below are generally for testing purposes only
-    new JoystickButton(_driver, Constants.JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(_intake)); 
-    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(_intake)); 
+    new JoystickButton(_driver, JoystickConstants.BUMPER_LEFT).whileHeld(new IntakeIn(_intake)); 
+    new JoystickButton(_driver, JoystickConstants.LOGO_LEFT).whileHeld(new IntakeOut(_intake)); 
 
-    new JoystickButton(_driver, Constants.JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperIdle(_hopper));
-    new JoystickButton(_driver, Constants.JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(_hopper));
+    new JoystickButton(_driver, JoystickConstants.BUMPER_RIGHT).whileHeld(new HopperIdle(_hopper));
+    new JoystickButton(_driver, JoystickConstants.LOGO_RIGHT).whileHeld(new HopperBack(_hopper));
 
     new JoystickButton(_driver, Constants.JoystickConstants.A).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Green)); 
     new JoystickButton(_driver, Constants.JoystickConstants.Y).whileHeld(new ShooterV2Go(_shooter, _hopper, COLOR.Yellow));
@@ -149,14 +150,14 @@ public class RobotContainer {
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         _drive_Train::getPose,
-        new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(Constants.DrivetrainConstants.ksVolts,
-          Constants.DrivetrainConstants.kvVoltSecondsPerMeter,
-          Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter),
-        Constants.DrivetrainConstants.kDriveKinematics,
+        new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(DrivetrainConstants.ksVolts,
+          DrivetrainConstants.kvVoltSecondsPerMeter,
+          DrivetrainConstants.kaVoltSecondsSquaredPerMeter),
+        DrivetrainConstants.kDriveKinematics,
         _drive_Train::getWheelSpeeds,
-        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
-        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
+        new PIDController(DrivetrainConstants.kPDriveVel, 0, 0),
+        new PIDController(DrivetrainConstants.kPDriveVel, 0, 0),
         _drive_Train::tankDriveVolts,
         _drive_Train);
      // Reset odometry to the starting pose of the trajectory.
@@ -167,21 +168,21 @@ public class RobotContainer {
   }
 
   public void loadSettings(){
-    _intake.setPower(Settings.loadDouble("Intake", "Power", Constants.IntakeConstants.defaultPower));
-    _hopper.setPower(Settings.loadDouble("Hopper", "Power", Constants.HopperConstants.defaultPower));
-    _hopper.setFeederPower(Settings.getLiveDouble("Hopper", "FeederPower", Constants.HopperConstants.hopperFeederPower));
-    _shooter.setkP(Settings.loadDouble("Shooter", "kF", Constants.ShooterConstants.defaultkF));
-    _shooter.setkF(Settings.loadDouble("Shooter", "kP", Constants.ShooterConstants.defaultkP));
-    _shooter.setRedVelocity(Settings.loadDouble("Shooter", "RedVelocity", Constants.ShooterConstants.redVelocity));
-    _shooter.setBlueVelocity(Settings.loadDouble("Shooter", "BlueVelocity", Constants.ShooterConstants.blueVelocity));
-    _shooter.setYellowVelocity(Settings.loadDouble("Shooter", "YellowVelocity", Constants.ShooterConstants.yellowVelocity));
-    _shooter.setGreenVelocity(Settings.loadDouble("Shooter", "GreenVelocity", Constants.ShooterConstants.greenVelocity));
-    _drive_Train.setkP(Settings.loadDouble("Limelight", "kP", Constants.LimelightConstants.kP));
-    _drive_Train.setkI(Settings.loadDouble("Limelight", "kI", Constants.LimelightConstants.kI));
-    _drive_Train.setkD(Settings.loadDouble("Limelight", "kD", Constants.LimelightConstants.kD));
-    _drive_Train.setksVolts(Settings.loadDouble("DriveTrain", "ksVolts", Constants.DrivetrainConstants.ksVolts));
-    _drive_Train.setkvVoltSecondsPerMeter(Settings.loadDouble("DriveTrain", "kvVoltSecondsPerMeter", Constants.DrivetrainConstants.kvVoltSecondsPerMeter));
-    _drive_Train.setkaVoltSecondsSquaredPerMeter(Settings.loadDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
+    _intake.setPower(Settings.loadDouble("Intake", "Power", IntakeConstants.defaultPower));
+    _hopper.setPower(Settings.loadDouble("Hopper", "Power", HopperConstants.defaultPower));
+    _hopper.setFeederPower(Settings.getLiveDouble("Hopper", "FeederPower", HopperConstants.hopperFeederPower));
+    _shooter.setkP(Settings.loadDouble("Shooter", "kF", ShooterConstants.defaultkF));
+    _shooter.setkF(Settings.loadDouble("Shooter", "kP", ShooterConstants.defaultkP));
+    _shooter.setRedVelocity(Settings.loadDouble("Shooter", "RedVelocity", ShooterConstants.redVelocity));
+    _shooter.setBlueVelocity(Settings.loadDouble("Shooter", "BlueVelocity", ShooterConstants.blueVelocity));
+    _shooter.setYellowVelocity(Settings.loadDouble("Shooter", "YellowVelocity", ShooterConstants.yellowVelocity));
+    _shooter.setGreenVelocity(Settings.loadDouble("Shooter", "GreenVelocity", ShooterConstants.greenVelocity));
+    _drive_Train.setkP(Settings.loadDouble("Limelight", "kP", LimelightConstants.kP));
+    _drive_Train.setkI(Settings.loadDouble("Limelight", "kI", LimelightConstants.kI));
+    _drive_Train.setkD(Settings.loadDouble("Limelight", "kD", LimelightConstants.kD));
+    _drive_Train.setksVolts(Settings.loadDouble("DriveTrain", "ksVolts", DrivetrainConstants.ksVolts));
+    _drive_Train.setkvVoltSecondsPerMeter(Settings.loadDouble("DriveTrain", "kvVoltSecondsPerMeter", DrivetrainConstants.kvVoltSecondsPerMeter));
+    _drive_Train.setkaVoltSecondsSquaredPerMeter(Settings.loadDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
   }
 
   public void saveSettings(){

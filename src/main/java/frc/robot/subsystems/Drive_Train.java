@@ -16,7 +16,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.JoystickConstants;
 import frc.robot.util.Settings;
@@ -41,18 +41,18 @@ public class Drive_Train extends SubsystemBase {
 
   private Pose2d m_pose;
 
-  private double _kP = Constants.LimelightConstants.kP;
-  private double _kI = Constants.LimelightConstants.kI;
-  private double _kD = Constants.LimelightConstants.kD;
-  private double _kF = Constants.LimelightConstants.kF;
+  private double _kP = LimelightConstants.kP;
+  private double _kI = LimelightConstants.kI;
+  private double _kD = LimelightConstants.kD;
+  private double _kF = LimelightConstants.kF;
 
-  private double _ksVolts = Constants.DrivetrainConstants.ksVolts;
-  private double _kvVoltSecondsPerMeter = Constants.DrivetrainConstants.kvVoltSecondsPerMeter;
-  private double _kaVoltSecondsSquaredPerMeter = Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter;
+  private double _ksVolts = DrivetrainConstants.ksVolts;
+  private double _kvVoltSecondsPerMeter = DrivetrainConstants.kvVoltSecondsPerMeter;
+  private double _kaVoltSecondsSquaredPerMeter = DrivetrainConstants.kaVoltSecondsSquaredPerMeter;
 
-  private double _kachunkPower = Constants.DrivetrainConstants.kachunkPower;
-  private double _kachunkTime = Constants.DrivetrainConstants.kachunkTime;
-  private double _driveRightkP = Constants.DrivetrainConstants.driveRightkP;
+  private double _kachunkPower = DrivetrainConstants.kachunkPower;
+  private double _kachunkTime = DrivetrainConstants.kachunkTime;
+  private double _driveRightkP = DrivetrainConstants.driveRightkP;
   private double _nerf = 1.0;
 
   public Drive_Train(AHRS gyro) {
@@ -234,13 +234,13 @@ public class Drive_Train extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     m_pose = m_odometry.update(_gyro.getRotation2d(), m_left_follower.getPosition(), m_right_follower.getPosition());
-
-    setkP(Settings.getLiveDouble("Limelight", "kP", Constants.LimelightConstants.kP));
-    setkI(Settings.getLiveDouble("Limelight", "kI", Constants.LimelightConstants.kI));
-    setkD(Settings.getLiveDouble("Limelight", "kD", Constants.LimelightConstants.kD));
     
-    setksVolts(Settings.getLiveDouble("DriveTrain", "ksVolts", Constants.DrivetrainConstants.ksVolts));
-    setkvVoltSecondsPerMeter(Settings.getLiveDouble("DriveTrain", "kvVoltSecondsPerMeter", Constants.DrivetrainConstants.kvVoltSecondsPerMeter));
-    setkaVoltSecondsSquaredPerMeter(Settings.getLiveDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
+    setkP(Settings.getLiveDouble("Limelight", "kP", LimelightConstants.kP));
+    setkI(Settings.getLiveDouble("Limelight", "kI", LimelightConstants.kI));
+    setkD(Settings.getLiveDouble("Limelight", "kD", LimelightConstants.kD));
+    
+    setksVolts(Settings.getLiveDouble("DriveTrain", "ksVolts", DrivetrainConstants.ksVolts));
+    setkvVoltSecondsPerMeter(Settings.getLiveDouble("DriveTrain", "kvVoltSecondsPerMeter", DrivetrainConstants.kvVoltSecondsPerMeter));
+    setkaVoltSecondsSquaredPerMeter(Settings.getLiveDouble("DriveTrain", "kaVoltSecondsSquaredPerMeter", DrivetrainConstants.kaVoltSecondsSquaredPerMeter));
   }
 }

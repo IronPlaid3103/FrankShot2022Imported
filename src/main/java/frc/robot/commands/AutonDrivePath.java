@@ -42,6 +42,7 @@ public class AutonDrivePath extends CommandBase {
       _ramsete.initialize();
       return;
     }
+
     _ramsete.execute();
   }
 

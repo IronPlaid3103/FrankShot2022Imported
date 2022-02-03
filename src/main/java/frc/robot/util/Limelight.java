@@ -5,7 +5,8 @@ package frc.robot.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.LimelightConstants;
 
 public class Limelight {
     private NetworkTable _table;
@@ -56,8 +57,8 @@ public class Limelight {
     }
 
     public double getDistance() {
-        double targetAngle = Math.toRadians(Constants.LimelightConstants.mountingAngle + this.getVerticalOffset());
-        double targetHeight = Constants.FieldConstants.targetHeight - Constants.LimelightConstants.mountingHeight;
+        double targetAngle = Math.toRadians(LimelightConstants.mountingAngle + this.getVerticalOffset());
+        double targetHeight = FieldConstants.targetHeight - LimelightConstants.mountingHeight;
         return targetHeight / Math.tan(targetAngle);
     }
 

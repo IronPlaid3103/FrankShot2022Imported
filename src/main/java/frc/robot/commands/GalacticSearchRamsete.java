@@ -12,7 +12,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drive_Train;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.TrajectoryCache;
@@ -67,13 +68,13 @@ public class GalacticSearchRamsete extends CommandBase {
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         _drivetrain::getPose,
-        new RamseteController(Constants.AutoConstants.kRamseteB, Constants.AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(Constants.DrivetrainConstants.ksVolts,
-            Constants.DrivetrainConstants.kvVoltSecondsPerMeter,
-            Constants.DrivetrainConstants.kaVoltSecondsSquaredPerMeter),
-        Constants.DrivetrainConstants.kDriveKinematics, _drivetrain::getWheelSpeeds,
-        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
-        new PIDController(Constants.DrivetrainConstants.kPDriveVel, 0, 0),
+        new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(DrivetrainConstants.ksVolts,
+            DrivetrainConstants.kvVoltSecondsPerMeter,
+            DrivetrainConstants.kaVoltSecondsSquaredPerMeter),
+        DrivetrainConstants.kDriveKinematics, _drivetrain::getWheelSpeeds,
+        new PIDController(DrivetrainConstants.kPDriveVel, 0, 0),
+        new PIDController(DrivetrainConstants.kPDriveVel, 0, 0),
         _drivetrain::tankDriveVolts, _drivetrain);
 
     _drivetrain.resetOdometry(trajectory.getInitialPose());

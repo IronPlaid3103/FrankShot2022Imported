@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.Drive_Train;
 import frc.robot.util.Limelight;
 
@@ -59,7 +59,7 @@ public class LimelightAim extends CommandBase {
       return true;
     }
     double horizontalOffset = _limelight.getHorizontalOffset();
-    if(Math.abs(horizontalOffset) < Constants.LimelightConstants.aimingTolerance && _limelight.isTargetValid())
+    if(Math.abs(horizontalOffset) < LimelightConstants.aimingTolerance && _limelight.isTargetValid())
       _aimCount++;
     else
       _aimCount = 0;
